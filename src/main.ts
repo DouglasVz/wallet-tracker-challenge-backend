@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ValidationPipe } from '@nestjs/common';
 
 const API_DESCRIPTION = `
     Welcome to the Blockchain Portfolio Tracker API documentation.
@@ -25,6 +26,9 @@ async function bootstrap() {
 
 	const document = SwaggerModule.createDocument(app, config);
 	SwaggerModule.setup('api', app, document); // Swagger UI at /api
+
+	//This enables class-validator globally
+	app.useGlobalPipes(new ValidationPipe());
 
   	await app.listen(process.env.PORT ?? 3000);
 }

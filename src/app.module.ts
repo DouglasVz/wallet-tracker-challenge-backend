@@ -18,7 +18,8 @@ import { AuthModule } from './auth/auth.module';
       autoLoadEntities: true,
       synchronize: false, // Note: set to false in production
       migrationsRun: true,
-    }), AuthModule,
+    }), 
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
