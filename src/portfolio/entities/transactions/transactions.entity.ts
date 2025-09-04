@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index } from 'typeor
 import { Wallet } from '../wallet/wallet.entity';
 
 @Entity('transactions')
-@Index(['wallet', 'tx_hash'], {unique: true})
+@Index(['tx_hash', 'wallet', 'log_index'], {unique: true})
 export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
@@ -12,6 +12,9 @@ export class Transaction {
 
   @Column({ length: 66 })
   tx_hash: string;
+
+  @Column({ type: 'int' })
+  log_index: number;
 
   @Column({ length: 42 })
   from_address: string;

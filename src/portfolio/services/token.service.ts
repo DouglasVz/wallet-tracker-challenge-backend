@@ -61,6 +61,7 @@ export class TokenService {
 
                     return {
                         txHash: log.transactionHash,
+                        logIndex: log.index,
                         timestamp: block ? new Date(block.timestamp * 1000).toISOString() : 'unknown',
                         from,
                         to,
@@ -75,6 +76,7 @@ export class TokenService {
             //     tx.from.toLowerCase() === walletAddress.toLowerCase() ||
             //     tx.to.toLowerCase() === walletAddress.toLowerCase()
             // );
+            
             return transfers;
         }catch(error) {
             throw new BadRequestException({

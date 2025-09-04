@@ -90,10 +90,11 @@ export class PortfolioService {
         const saved: Transaction[] = [];
 
         for (const tx of transfers) {
-            const exists = await this.txRepo.findOne({ where: { tx_hash: tx.txHash, wallet: { id: wallet.id } } });
+            const exists = await this.txRepo.findOne({ where: { tx_hash: tx.txHash, log_index: tx.logIndex, wallet: { id: wallet.id } } });
             const transaction = {
                 wallet,
                 tx_hash: tx.txHash,
+                log_index: tx.logIndex,
                 from_address: tx.from,
                 to_address: tx.to,
                 amount: tx.amount,
