@@ -79,13 +79,13 @@ export class PortfolioService {
         return wallet;
     }
 
-    async syncTransactions(userId: number, walletId: number): Promise<Transaction[]> {
+    async syncTransactions(userId: number, walletId: number, contractAddress: string): Promise<Transaction[]> {
         const wallet = await this.walletRepo.findOne({
             where: { id: walletId, user: { id: userId } },
         });
         if (!wallet) throw new NotFoundException('Wallet not found');
 
-        const transfers = await this.tokenService.getTokenTransfers(wallet.address, process.env.ERC20_TOKEN_ADDRESS ?? '');
+        const transfers = await this.tokenService.getTokenTransfers(wallet.address, contractAddress);
 
         const saved: Transaction[] = [];
 
@@ -113,14 +113,14 @@ export class PortfolioService {
         return saved;
     }
 
-    async createSnapshot(userId: number): Promise<PortfolioSnapshot> {
+    async createSnapshot(userId: number, contractAddress: string): Promise<PortfolioSnapshot> {
         const wallets = await this.walletRepo.find({ where: { user: { id: userId } } });
-        const tokenPrice = await this.tokenService.getTokenPriceUSD();
+        const tokenPrice = await this.tokenService.getTokenPriceUSD(contractAddress);
 
         let totalValue = 0;
 
         for (const wallet of wallets) {
-            const balanceStr = await this.tokenService.getTokenBalance(wallet.address, process.env.ERC20_TOKEN_ADDRESS ?? '');
+            const balanceStr = await this.tokenService.getTokenBalance(wallet.address, contractAddress);
             const {balance}= balanceStr;
             totalValue += parseFloat(balance) * tokenPrice;
         }

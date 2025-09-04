@@ -1,5 +1,5 @@
-import { Controller, Post, Get, Request, Param, Delete, Body } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Post, Get, Request, Param, Delete, Body, Query } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { PortfolioService } from './portfolio.service';
 import { TokenService } from './services/token.service';
 import { UseGuards } from '@nestjs/common';
@@ -34,8 +34,9 @@ export class PortfolioController {
     @Post('snapshots')
     @ApiOperation({ summary: 'Create a portfolio snapshot for the authenticated user' })
     @ApiResponse({ status: 201, description: 'Snapshot created successfully' })
-        async createSnapshot(@Request() req) {
-        return this.portfolioService.createSnapshot(req.user.userId);
+    @ApiQuery({ name: 'contract_address', type: String, required: true, description: 'Contract address token.' })
+    async createSnapshot(@Query('contract_address') contractAddress: string, @Request() req) {
+        return this.portfolioService.createSnapshot(req.user.userId, contractAddress);
     }
 
     @Get('wallets')
@@ -75,7 +76,9 @@ export class PortfolioController {
     }
 
     @Get('wallets/:id/balance')
-    @ApiOperation({ summary: 'Get ERC20 token balance for a wallet' })
+    @ApiOperation({ summary: 'Get token balance for a wallet' })
+    @ApiQuery({ name: 'contract_address', type: String, required: true, description: 'Contract address token.' })
+    @ApiParam({ name: 'id', type: Number, description: 'Wallet ID' })
     @ApiResponse({
         status: 200,
         description: 'Token balance returned',
@@ -88,13 +91,15 @@ export class PortfolioController {
             },
         },
     })
-    async getTokenBalance(@Param('id') walletId: number, @Request() req) {
+    async getTokenBalance(@Param('id') walletId: number,  @Query('contract_address') contractAddress: string, @Request() req) {
         const wallet = await this.portfolioService.getWalletById(req.user.userId, walletId);
-        return this.tokenService.getTokenBalance(wallet.address, process.env.ERC20_TOKEN_ADDRESS ?? '');
+        return this.tokenService.getTokenBalance(wallet.address, contractAddress);
     }
 
     @Get('wallets/:id/transactions')
-    @ApiOperation({ summary: 'Sync and store ERC20 transactions for a wallet' })
+    @ApiOperation({ summary: 'Sync and store transactions for a wallet' })
+    @ApiQuery({ name: 'contract_address', type: String, required: true, description: 'Contract address token.' })
+    @ApiParam({ name: 'id', type: Number, description: 'Wallet ID' })
     @ApiResponse({ 
         status: 201, 
         description: 'Transactions stored successfully', 
@@ -110,12 +115,13 @@ export class PortfolioController {
                 } ] 
             } 
         })
-        async syncTransactions(@Param('id') walletId: number, @Request() req) {
-        return this.portfolioService.syncTransactions(req.user.userId, walletId);
+        async syncTransactions(@Param('id') walletId: number, @Query('contract_address') contractAddress: string, @Request() req) {
+        return this.portfolioService.syncTransactions(req.user.userId, walletId, contractAddress);
     }
 
     @Delete('wallets/:id')
     @ApiOperation({ summary: 'Remove a wallet from the user portfolio' })
+    @ApiParam({ name: 'id', type: Number, description: 'Wallet ID' })
     @ApiResponse({ status: 200, description: 'Wallet removed successfully',
         schema: {
             type: 'Object',

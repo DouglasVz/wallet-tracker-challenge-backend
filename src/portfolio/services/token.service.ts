@@ -35,12 +35,12 @@ export class TokenService {
         };
     }
 
-    async getTokenTransfers(walletAddress: string, tokenAddress: string): Promise<any[]> {
+    async getTokenTransfers(walletAddress: string, contractAddress: string): Promise<any[]> {
         const abi = [
             'event Transfer(address indexed from, address indexed to, uint256 value)',
         ];
         try {
-            const contract = new ethers.Contract(tokenAddress, abi, this.provider);
+            const contract = new ethers.Contract(contractAddress, abi, this.provider);
             const latestBlock = await this.provider.getBlockNumber();
             const fromBlock = latestBlock - 9;
             const toBlock = latestBlock;
@@ -85,9 +85,9 @@ export class TokenService {
 
     }
 
-    async getTokenPriceUSD(): Promise<number> {
+    async getTokenPriceUSD(contractAddress: string): Promise<number> {
     try {
-        const tokenAddress = process.env.ERC20_TOKEN_ADDRESS?.toLowerCase();
+        const tokenAddress = contractAddress?.toLowerCase();
         if (!tokenAddress) throw new Error('Token address not set');
 
         const response = await axios.get(`https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokenAddress}&vs_currencies=usd`);
