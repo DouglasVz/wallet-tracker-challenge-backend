@@ -17,6 +17,12 @@ const API_DESCRIPTION = `
 async function bootstrap() {
   	const app = await NestFactory.create(AppModule);
 
+	app.enableCors({
+		origin: '*',
+		methods: ['GET', 'POST', 'PUT', 'DELETE'],
+		credentials: true, // for auth headers
+	});
+
   	const config = new DocumentBuilder()
 	.setTitle('Blockchain Portfolio Tracker')
 	.setDescription(API_DESCRIPTION)
