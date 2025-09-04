@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { PortfolioModule } from './portfolio/portfolio.module';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: false, // Note: set to false in production
       migrationsRun: true,
     }), 
-    AuthModule,
+    AuthModule, PortfolioModule,
   ],
   controllers: [AppController],
   providers: [AppService],
