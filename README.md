@@ -68,7 +68,7 @@ After running the migration, your database tables will be created according to t
 
 You can test and explore the API endpoints using Swagger UI:
 
-- Visit [http://localhost:4000](http://localhost:4000) in your browser.
+- Visit [http://localhost:4000/api](http://localhost:4000/api) in your browser.
 
 **Steps to test endpoints:**
 1. Register a user via the `/auth/register` endpoint.
